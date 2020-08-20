@@ -1,4 +1,4 @@
-package io.kyouin.azurlane.entities;
+package io.kyouin.azurlane.containers.ships;
 
 import org.jsoup.nodes.Element;
 
@@ -15,6 +15,7 @@ public class Info {
     private final String classification;
     private final String illustrator;
     private final String voiceActor;
+    private final boolean secretaryQuest;
     private final boolean retrofit;
 
     public static Info fromElement(Element content) {
@@ -31,12 +32,13 @@ public class Info {
         String classification = content.selectFirst("th:contains(Classification)").nextElementSibling().text().trim();
         String illustrator = content.selectFirst("th:contains(Illustrator)").nextElementSibling().text().trim().replaceAll("[  ]", "");
         String voiceActor = content.selectFirst("th:contains(Voice actor)").nextElementSibling().text().trim().replaceAll("[  ]", "");
+        boolean secretaryQuest = !content.select("a:contains(Questline)").isEmpty();
         boolean retrofit = !content.select("span#Retrofit").isEmpty();
 
-        return new Info(fullName, bannerUrl, iconUrl, constructionTime, rarity, shipClass, id, nationality, classification, illustrator, voiceActor, retrofit);
+        return new Info(fullName, bannerUrl, iconUrl, constructionTime, rarity, shipClass, id, nationality, classification, illustrator, voiceActor, secretaryQuest, retrofit);
     }
 
-    public Info(String fullName, String bannerUrl, String iconUrl, String constructionTime, String rarity, String shipClass, String id, String nationality, String classification, String illustrator, String voiceActor, boolean retrofit) {
+    public Info(String fullName, String bannerUrl, String iconUrl, String constructionTime, String rarity, String shipClass, String id, String nationality, String classification, String illustrator, String voiceActor, boolean secretaryQuest, boolean retrofit) {
         this.fullName = fullName;
         this.bannerUrl = bannerUrl;
         this.iconUrl = iconUrl;
@@ -48,6 +50,7 @@ public class Info {
         this.classification = classification;
         this.illustrator = illustrator;
         this.voiceActor = voiceActor;
+        this.secretaryQuest = secretaryQuest;
         this.retrofit = retrofit;
     }
 
@@ -95,7 +98,11 @@ public class Info {
         return voiceActor;
     }
 
-    public boolean isRetrofit() {
+    public boolean hasSecretaryQuest() {
+        return secretaryQuest;
+    }
+
+    public boolean hasRetrofit() {
         return retrofit;
     }
 }

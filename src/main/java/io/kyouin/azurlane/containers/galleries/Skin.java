@@ -1,4 +1,4 @@
-package io.kyouin.azurlane.containers.ships;
+package io.kyouin.azurlane.containers.galleries;
 
 import org.jsoup.nodes.Element;
 

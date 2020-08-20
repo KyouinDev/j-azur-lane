@@ -1,7 +1,6 @@
-package io.kyouin.azurlane.entities;
+package io.kyouin.azurlane.containers.ships;
 
 import io.kyouin.azurlane.enums.SkillType;
-import io.kyouin.azurlane.utils.HtmlUtils;
 import org.jsoup.nodes.Element;
 
 import java.util.Comparator;
@@ -21,7 +20,6 @@ public class Ship {
     private final List<ChapterDrop> chapterDrops;
     private final Obtainment obtainment;
     private final Values values;
-    private final List<Skin> skins;
 
     public static Ship fromElement(Element content) {
         String name = content.selectFirst("div.azl_box_title").text().trim();
@@ -71,13 +69,10 @@ public class Ship {
 
         Values values = Values.fromElement(content.selectFirst("table#Values"));
 
-        Element gallery = HtmlUtils.getBody(content.selectFirst("a:contains(Gallery)").attr("abs:href")).selectFirst("div.mw-parser-output");
-        List<Skin> skins = gallery.select("div.shipskin").stream().map(Skin::fromElement).collect(Collectors.toList());
-
-        return new Ship(name, info, statistics, equipment, limitBreaks, developmentLevels, skills, fleetTech, chapterDrops, obtainment, values, skins);
+        return new Ship(name, info, statistics, equipment, limitBreaks, developmentLevels, skills, fleetTech, chapterDrops, obtainment, values);
     }
 
-    public Ship(String name, Info info, List<Stats> stats, List<Equipment> equipment, LimitBreaks limitBreaks, DevelopmentLevels developmentLevels, List<Skill> skills, FleetTech fleetTech, List<ChapterDrop> chapterDrops, Obtainment obtainment, Values values, List<Skin> skins) {
+    public Ship(String name, Info info, List<Stats> stats, List<Equipment> equipment, LimitBreaks limitBreaks, DevelopmentLevels developmentLevels, List<Skill> skills, FleetTech fleetTech, List<ChapterDrop> chapterDrops, Obtainment obtainment, Values values) {
         this.name = name;
         this.info = info;
         this.stats = stats;
@@ -89,7 +84,6 @@ public class Ship {
         this.chapterDrops = chapterDrops;
         this.obtainment = obtainment;
         this.values = values;
-        this.skins = skins;
     }
 
     public String getName() {
@@ -134,9 +128,5 @@ public class Ship {
 
     public Values getValues() {
         return values;
-    }
-
-    public List<Skin> getSkins() {
-        return skins;
     }
 }

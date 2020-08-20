@@ -15,6 +15,7 @@ public enum SkillType {
     public static SkillType fromStyle(String style) {
         return Arrays.stream(SkillType.values())
                 .filter(skillType -> style.contains(skillType.color))
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
     }
 }

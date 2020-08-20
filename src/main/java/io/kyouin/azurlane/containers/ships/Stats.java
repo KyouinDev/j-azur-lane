@@ -1,4 +1,4 @@
-package io.kyouin.azurlane.entities;
+package io.kyouin.azurlane.containers.ships;
 
 import io.kyouin.azurlane.enums.StatsType;
 import org.jsoup.nodes.Element;
