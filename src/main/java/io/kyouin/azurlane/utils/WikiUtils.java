@@ -9,6 +9,10 @@ import java.util.stream.Collectors;
 
 public final class WikiUtils {
 
+    private WikiUtils() {
+        //nothing
+    }
+
     public static List<String> getShipNames() {
         Elements tables = HtmlUtils.getBody(AzurConstants.WIKI_SHIP_LIST).select("table.wikitable");
         List<String> names = new ArrayList<>();

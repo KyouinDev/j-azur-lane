@@ -50,7 +50,7 @@ public class Skin {
         Element available = shipskin.selectFirst("th:contains(" + client + " Client)").nextElementSibling();
         String text = available.text().trim();
 
-        if (text.equals("skin unavailable")) return text;
+        if ("skin unavailable".equals(text)) return text;
 
         return available.nextElementSibling().text().trim();
     }

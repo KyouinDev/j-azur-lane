@@ -16,6 +16,10 @@ import java.util.List;
 
 public final class FileUtils {
 
+    private FileUtils() {
+        //nothing
+    }
+
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private static final File parentFile = new File("azurlane");

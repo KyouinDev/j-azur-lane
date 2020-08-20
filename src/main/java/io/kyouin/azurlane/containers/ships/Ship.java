@@ -40,7 +40,9 @@ public class Ship {
 
         if (!content.select("table#Limit_breaks").isEmpty()) {
             limitBreaks = LimitBreaks.fromElement(content.selectFirst("table#Limit_breaks > tbody"));
-        } else if (!content.select("table#Development_levels").isEmpty()) {
+        }
+
+        if (!content.select("table#Development_levels").isEmpty()) {
             developmentLevels = DevelopmentLevels.fromElement(content.selectFirst("table#Development_levels > tbody"));
         }
 

@@ -20,11 +20,11 @@ public class Skill {
 
         if (!tr.select("a").isEmpty()) iconUrl = tr.selectFirst("a").attr("href");
 
-        tr = tr.nextElementSibling().nextElementSibling();
-        tr.select("a:contains((gif)),b,sup,small,li.mw-empty-elt").remove();
-        tr.select("li").prepend("• ");
+        Element nextTr = tr.nextElementSibling().nextElementSibling();
+        nextTr.select("a:contains((gif)),b,sup,small,li.mw-empty-elt").remove();
+        nextTr.select("li").prepend("• ");
 
-        String description = tr.text().replaceAll("•", "\n•").trim();
+        String description = nextTr.text().replaceAll("•", "\n•").trim();
 
         return new Skill(name, type, iconUrl, description);
     }
