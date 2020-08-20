@@ -10,11 +10,11 @@ import java.util.List;
 
 public class ShipManager implements IContainerManager<Ship> {
 
-    private final List<Ship> ships = FileUtils.loadShips();
+    private final List<Ship> shipList = FileUtils.loadShips();
 
     @Override
     public Ship get(String name) {
-        return ships.stream()
+        return shipList.stream()
                 .filter(ship -> ship.getName().equalsIgnoreCase(name))
                 .findFirst()
                 .orElse(null);
@@ -22,7 +22,7 @@ public class ShipManager implements IContainerManager<Ship> {
 
     @Override
     public List<Ship> getAll() {
-        return ships;
+        return shipList;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class ShipManager implements IContainerManager<Ship> {
         Ship ship = null;
 
         try {
-            ship = Ship.fromElement(HtmlUtils.getBody(AzurConstants.WIKI_SHIP.replace("{ship}", name.replaceAll(" ", "_"))).selectFirst("div.mw-parser-output"));
+            ship = Ship.fromElement(HtmlUtils.getBody(AzurConstants.WIKI_SHIP.replace("{ship}", name.replaceAll(" ", "_"))));
         } catch (Exception e) {
             System.out.println("Failed: " + name);
             e.printStackTrace();
@@ -40,13 +40,13 @@ public class ShipManager implements IContainerManager<Ship> {
 
         Ship finalShip = ship;
 
-        ships.stream().filter(s -> s.getName().equals(finalShip.getName())).findFirst().ifPresent(ships::remove);
-        ships.add(ship);
+        shipList.stream().filter(s -> s.getName().equals(finalShip.getName())).findFirst().ifPresent(shipList::remove);
+        shipList.add(ship);
     }
 
     @Override
     public void updateAll() {
         WikiUtils.getShipNames().forEach(this::update);
-        FileUtils.saveShips(ships);
+        FileUtils.saveShips(shipList);
     }
 }

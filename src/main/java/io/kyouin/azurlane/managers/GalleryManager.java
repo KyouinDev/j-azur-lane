@@ -10,11 +10,11 @@ import java.util.List;
 
 public class GalleryManager implements IContainerManager<Gallery> {
 
-    private final List<Gallery> galleries = FileUtils.loadGalleries();
+    private final List<Gallery> galleryList = FileUtils.loadGalleries();
 
     @Override
     public Gallery get(String name) {
-        return galleries.stream()
+        return galleryList.stream()
                 .filter(gallery -> gallery.getName().equalsIgnoreCase(name))
                 .findFirst()
                 .orElse(null);
@@ -22,7 +22,7 @@ public class GalleryManager implements IContainerManager<Gallery> {
 
     @Override
     public List<Gallery> getAll() {
-        return galleries;
+        return galleryList;
     }
 
     @Override
@@ -40,13 +40,13 @@ public class GalleryManager implements IContainerManager<Gallery> {
 
         Gallery finalGallery = gallery;
 
-        galleries.stream().filter(s -> s.getName().equals(finalGallery.getName())).findFirst().ifPresent(galleries::remove);
-        galleries.add(finalGallery);
+        galleryList.stream().filter(s -> s.getName().equals(finalGallery.getName())).findFirst().ifPresent(galleryList::remove);
+        galleryList.add(finalGallery);
     }
 
     @Override
     public void updateAll() {
         WikiUtils.getShipNames().forEach(this::update);
-        FileUtils.saveGalleries(galleries);
+        FileUtils.saveGalleries(galleryList);
     }
 }

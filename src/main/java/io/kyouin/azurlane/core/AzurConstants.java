@@ -8,5 +8,7 @@ public class AzurConstants {
 
     public static final String WIKI_SHIP_GALLERY = WIKI_URL + "/{ship}/Gallery";
 
+    public static final String WIKI_SHIP_QUOTES = WIKI_URL + "/{ship}/Quotes";
+
     public static final String WIKI_SHIP_LIST = WIKI_URL + "/List_of_Ships";
 }

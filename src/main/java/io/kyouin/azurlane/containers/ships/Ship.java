@@ -22,15 +22,16 @@ public class Ship {
     private final Values values;
 
     public static Ship fromElement(Element content) {
-        String name = content.selectFirst("div.azl_box_title").text().trim();
-        Info info = Info.fromElement(content);
+        String name = content.selectFirst("h1#firstHeading").text().trim();
+        Element divContent = content.selectFirst("div.mw-parser-output");
+        Info info = Info.fromElement(divContent);
 
-        List<Stats> statistics = content.selectFirst("table#Statistics").select("div.tabbertab").stream()
+        List<Stats> statistics = divContent.selectFirst("table#Statistics").select("div.tabbertab").stream()
                 .map(Stats::fromElement)
                 .sorted(Comparator.comparing(Stats::getName))
                 .collect(Collectors.toList());
 
-        List<Equipment> equipment = content.select("table#Equipment > tbody > tr").stream()
+        List<Equipment> equipment = divContent.select("table#Equipment > tbody > tr").stream()
                 .skip(2)
                 .map(Equipment::fromElement)
                 .collect(Collectors.toList());
@@ -38,26 +39,26 @@ public class Ship {
         LimitBreaks limitBreaks = null;
         DevelopmentLevels developmentLevels = null;
 
-        if (!content.select("table#Limit_breaks").isEmpty()) {
-            limitBreaks = LimitBreaks.fromElement(content.selectFirst("table#Limit_breaks > tbody"));
+        if (!divContent.select("table#Limit_breaks").isEmpty()) {
+            limitBreaks = LimitBreaks.fromElement(divContent.selectFirst("table#Limit_breaks > tbody"));
         }
 
-        if (!content.select("table#Development_levels").isEmpty()) {
-            developmentLevels = DevelopmentLevels.fromElement(content.selectFirst("table#Development_levels > tbody"));
+        if (!divContent.select("table#Development_levels").isEmpty()) {
+            developmentLevels = DevelopmentLevels.fromElement(divContent.selectFirst("table#Development_levels > tbody"));
         }
 
-        List<Skill> skills = content.select("table#Skills > tbody > tr").stream()
+        List<Skill> skills = divContent.select("table#Skills > tbody > tr").stream()
                 .filter(skillRow -> !skillRow.select("th").isEmpty())
                 .filter(skillRow -> SkillType.fromStyle(skillRow.selectFirst("th").attr("style")) != null)
                 .map(Skill::fromElement)
                 .collect(Collectors.toList());
 
-        FleetTech fleetTech = FleetTech.fromElement(content.selectFirst("table#Fleet_technology"));
+        FleetTech fleetTech = FleetTech.fromElement(divContent.selectFirst("table#Fleet_technology"));
 
         List<ChapterDrop> chapterDrops = null;
 
-        if (!content.select("table#Drop").isEmpty()) {
-            chapterDrops = content.select("table#Drop > tbody > tr").stream()
+        if (!divContent.select("table#Drop").isEmpty()) {
+            chapterDrops = divContent.select("table#Drop > tbody > tr").stream()
                     .skip(2).limit(13)
                     .map(ChapterDrop::fromElement)
                     .collect(Collectors.toList());
@@ -65,11 +66,11 @@ public class Ship {
 
         Obtainment obtainment = null;
 
-        if (!content.select("table#Obtainment").isEmpty()) {
-            obtainment = Obtainment.fromElement(content.selectFirst("table#Obtainment").selectFirst("td"));
+        if (!divContent.select("table#Obtainment").isEmpty()) {
+            obtainment = Obtainment.fromElement(divContent.selectFirst("table#Obtainment").selectFirst("td"));
         }
 
-        Values values = Values.fromElement(content.selectFirst("table#Values"));
+        Values values = Values.fromElement(divContent.selectFirst("table#Values"));
 
         return new Ship(name, info, statistics, equipment, limitBreaks, developmentLevels, skills, fleetTech, chapterDrops, obtainment, values);
     }
