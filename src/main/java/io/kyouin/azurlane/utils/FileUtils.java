@@ -16,10 +16,6 @@ import java.util.List;
 
 public final class FileUtils {
 
-    private FileUtils() {
-        //nothing
-    }
-
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private static final File parentFile = new File("azurlane");
@@ -29,6 +25,10 @@ public final class FileUtils {
 
     private static final File galleriesFile = new File(parentFile, "galleries.json");
     private static final Type galleriesType = new TypeToken<List<Gallery>>(){}.getType();
+
+    private FileUtils() {
+        //nothing
+    }
 
     public static void init() {
         if (parentFile.mkdirs()) {

@@ -8,11 +8,11 @@ import java.io.IOException;
 
 public final class HtmlUtils {
 
+    private static long lastRequestMs = System.currentTimeMillis();
+
     private HtmlUtils() {
         //nothing
     }
-
-    private static long lastRequestMs = System.currentTimeMillis();
 
     public static Element getBody(String url) {
         long ms = System.currentTimeMillis() - lastRequestMs;
