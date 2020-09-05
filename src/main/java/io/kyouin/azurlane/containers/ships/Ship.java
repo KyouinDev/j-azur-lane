@@ -31,7 +31,7 @@ public class Ship {
                 .sorted(Comparator.comparing(Stats::getName))
                 .collect(Collectors.toList());
 
-        List<Equipment> equipment = divContent.select("table#Equipment > tbody > tr").stream()
+        List<Equipment> equipment = divContent.select("table#Gear > tbody > tr").stream()
                 .skip(2)
                 .map(Equipment::fromElement)
                 .collect(Collectors.toList());
@@ -70,7 +70,9 @@ public class Ship {
             obtainment = Obtainment.fromElement(divContent.selectFirst("table#Obtainment").selectFirst("td"));
         }
 
-        Values values = Values.fromElement(divContent.selectFirst("table#Values"));
+        Values values = null;
+
+        if (!divContent.select("table#Values").isEmpty()) values = Values.fromElement(divContent.selectFirst("table#Values"));
 
         return new Ship(name, info, statistics, equipment, limitBreaks, developmentLevels, skills, fleetTech, chapterDrops, obtainment, values);
     }

@@ -9,7 +9,7 @@ public class LimitBreaks {
     private final String third;
 
     public static LimitBreaks fromElement(Element tbody) {
-        if (tbody.select("td").text().isEmpty()) return null;
+        if (tbody.select("td").size() == 1) return null;
 
         if (!tbody.select("li").isEmpty()) tbody.select("li").prepend("• ");
 

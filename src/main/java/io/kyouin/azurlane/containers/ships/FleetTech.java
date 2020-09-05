@@ -15,7 +15,7 @@ public class FleetTech {
     public static FleetTech fromElement(Element tbody) {
         Elements td = tbody.select("td");
 
-        if (td.size() == 2 || td.get(3).text().trim().equals("0")) return null;
+        if (td.size() == 1) return null;
 
         td.select("a[title*=Tech point]").remove();
         td.select("img").forEach(img -> img.prepend(img.attr("alt")));

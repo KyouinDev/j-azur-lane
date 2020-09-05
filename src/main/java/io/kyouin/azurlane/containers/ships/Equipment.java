@@ -8,10 +8,11 @@ public class Equipment {
     private final String efficiency;
 
     public static Equipment fromElement(Element tr) {
-        String equippable = tr.select("a").text().trim();
-        tr.select("a").remove();
+        tr.select("br").prepend("|");
+        String text = tr.text();
 
-        String efficiency = tr.text().trim();
+        String equippable = text.split("\\|")[0].trim();
+        String efficiency = text.split("\\|")[1].trim();
 
         return new Equipment(equippable, efficiency);
     }
