@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 
 public class Stats {
 
-    private final static String TABLE_CELLS = "table:eq(0) > * td";
+    private final static String TABLE_CELLS = "table > * td";
 
     private final String name;
     private final Map<StatsType, String> values;
@@ -19,8 +19,8 @@ public class Stats {
         String name = tabbertab.attr("title").replaceAll(" ", "");
         Map<StatsType, String> values = new LinkedHashMap<>();
 
-        Elements td = tabbertab.select(TABLE_CELLS);
-        IntStream.range(0, td.size()).forEach(i -> values.put(StatsType.values()[i], td.get(i).text()));
+        Elements tds = tabbertab.select(TABLE_CELLS);
+        IntStream.range(0, tds.size()).forEach(i -> values.put(StatsType.values()[i], tds.get(i).text()));
 
         return new Stats(name, values);
     }
