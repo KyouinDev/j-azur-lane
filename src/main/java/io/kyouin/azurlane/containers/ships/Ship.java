@@ -2,7 +2,6 @@ package io.kyouin.azurlane.containers.ships;
 
 import io.kyouin.azurlane.enums.SkillType;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.util.Comparator;
 import java.util.List;
@@ -19,7 +18,8 @@ public class Ship {
     private final static String SKILLS = "table#Skills > tbody > tr";
     private final static String SKILL_HEADER = "th";
     private final static String FLEET_TECH = "table#Fleet_technology > tbody";
-    private final static String DROP_STAGES = "table#Drop > tbody > tr";
+    private final static String DROP_STAGES = "table#Drop > tbody";
+    private final static String CHAPTERS = "tr";
     private final static String OBTAINMENT = "table#Obtainment > tbody";
     private final static String OBTAINMENT_ROW = "td";
     private final static String VALUES = "table#Values > tbody";
@@ -64,8 +64,8 @@ public class Ship {
 
         FleetTech fleetTech = FleetTech.fromElement(divContent.selectFirst(FLEET_TECH));
 
-        Elements chapterDropsElements = divContent.select(DROP_STAGES);
-        List<ChapterDrop> chapterDrops = chapterDropsElements.isEmpty() ? null : chapterDropsElements.select(DROP_STAGES).stream()
+        Element chapterDropsElement = divContent.selectFirst(DROP_STAGES);
+        List<ChapterDrop> chapterDrops = chapterDropsElement == null ? null : chapterDropsElement.select(CHAPTERS).stream()
                 .skip(2)
                 .limit(13)
                 .map(ChapterDrop::fromElement)
