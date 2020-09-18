@@ -6,6 +6,13 @@ import org.jsoup.nodes.Element;
 
 public class Skill {
 
+    private final static String SKILL_HEADER = "th";
+    private final static String SKILL_ICON = "a > img";
+    private final static String BARRAGE_GIF_LINK = "a:contains((gif))";
+    private final static String BARRAGE_GIF = "div#file > a";
+    private final static String USELESS_TAGS = "a:contains((gif)),b,sup,small,li.mw-empty-elt";
+    private final static String LIST_ELEMENTS = "li";
+
     private final String name;
     private final SkillType type;
     private final String iconUrl;
@@ -13,29 +20,21 @@ public class Skill {
     private final String description;
 
     public static Skill fromElement(Element tr) {
-        tr.select("span").remove();
+        String name = tr.text().replaceAll(" ?CN:.+", "");
+        SkillType type = SkillType.fromStyle(tr.selectFirst(SKILL_HEADER).attr("style"));
 
-        String name = tr.selectFirst("div > div").html().split("<br>")[0].trim();
-        SkillType type = SkillType.fromStyle(tr.selectFirst("th").attr("style"));
-
-        String iconUrl = null;
-
-        if (!tr.select("a > img").isEmpty())
-            iconUrl = tr.selectFirst("a > img").attr("abs:src").split("\\.png")[0].replace("thumb/", "") + ".png";
+        Element icon = tr.selectFirst(SKILL_ICON);
+        String iconUrl = icon == null ? null : icon.attr("abs:src").split("\\.png")[0].replace("thumb/", "") + ".png";
 
         Element nextTr = tr.nextElementSibling().nextElementSibling();
 
-        String gifUrl = null;
+        Element gifElement = nextTr.selectFirst(BARRAGE_GIF_LINK);
+        String gifUrl = gifElement == null ? null : HtmlUtils.getBody(gifElement.attr("abs:href")).selectFirst(BARRAGE_GIF).attr("abs:href");
 
-        if (!nextTr.select("a:contains((gif))").isEmpty()) {
-            Element gifBody = HtmlUtils.getBody(nextTr.selectFirst("a:contains((gif))").attr("abs:href"));
-            gifUrl = gifBody.selectFirst("div#file > a").attr("abs:href");
-        }
+        nextTr.select(USELESS_TAGS).remove();
+        nextTr.select(LIST_ELEMENTS).prepend("• ");
 
-        nextTr.select("a:contains((gif)),b,sup,small,li.mw-empty-elt").remove();
-        nextTr.select("li").prepend("• ");
-
-        String description = nextTr.text().replaceAll("•", "\n•").trim();
+        String description = nextTr.text().replaceAll("•", "\n•");
 
         return new Skill(name, type, iconUrl, gifUrl, description);
     }

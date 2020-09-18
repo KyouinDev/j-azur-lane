@@ -1,23 +1,29 @@
 package io.kyouin.azurlane.containers.ships;
 
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class ChapterDrop {
 
+    private final static String BOSS_NODES = "td > a[title*=Boss] > img";
+    private final static String DROP_STAGES = "td > a[title*=-] > img";
+    private final static String CHAPTER_NAME = "td:eq(0)";
+    private final static String FIRST_STAGE = "td:eq(1)";
+    private final static String SECOND_STAGE = "td:eq(2)";
+    private final static String THIRD_STAGE = "td:eq(3)";
+    private final static String FOURTH_STAGE = "td:eq(4)";
+
     private final String chapter;
     private final List<String> stages;
 
     public static ChapterDrop fromElement(Element tr) {
-        Elements td = tr.select("td");
-        td.select("a[title*=Boss] > img").forEach(img -> img.prepend(img.attr("alt")));
-        td.select("a[title*=-] > img").forEach(img -> img.prepend("✓"));
+        tr.select(BOSS_NODES).forEach(img -> img.prepend(img.attr("alt")));
+        tr.select(DROP_STAGES).forEach(img -> img.prepend("✓"));
 
-        String chapter = td.get(0).text().trim();
-        List<String> stages = Arrays.asList(td.get(1).text().trim(), td.get(2).text().trim(), td.get(3).text().trim(), td.get(4).text().trim());
+        String chapter = tr.select(CHAPTER_NAME).text();
+        List<String> stages = Arrays.asList(tr.select(FIRST_STAGE).text(), tr.select(SECOND_STAGE).text(), tr.select(THIRD_STAGE).text(), tr.select(FOURTH_STAGE).text());
 
         return new ChapterDrop(chapter, stages);
     }

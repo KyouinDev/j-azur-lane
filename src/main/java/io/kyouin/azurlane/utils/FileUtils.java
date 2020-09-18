@@ -21,14 +21,14 @@ public final class FileUtils {
 
     private static final File parentFile = new File("azurlane");
 
-    private static final File shipsFile = new File(parentFile, "ships.json");
-    private static final Type shipsType = new TypeToken<List<Ship>>(){}.getType();
-
     private static final File galleriesFile = new File(parentFile, "galleries.json");
     private static final Type galleriesType = new TypeToken<List<Gallery>>(){}.getType();
 
     private static final File quotesFile = new File(parentFile, "quotes.json");
     private static final Type quotesType = new TypeToken<List<Quotes>>(){}.getType();
+
+    private static final File shipsFile = new File(parentFile, "ships.json");
+    private static final Type shipsType = new TypeToken<List<Ship>>(){}.getType();
 
     private FileUtils() {
         //nothing
@@ -39,16 +39,16 @@ public final class FileUtils {
             System.out.println("Created directory azurlane");
         }
 
-        checkFile(shipsFile, "[]");
-        checkFile(galleriesFile, "[]");
-        checkFile(quotesFile, "[]");
+        checkFile(galleriesFile);
+        checkFile(quotesFile);
+        checkFile(shipsFile);
     }
 
-    private static void checkFile(File file, String empty) {
+    private static void checkFile(File file) {
         try {
             if (file.createNewFile()) {
                 try (FileWriter fw = new FileWriter(file)) {
-                    fw.write(empty);
+                    fw.write("[]");
                 }
             }
         } catch (IOException e) {
@@ -76,10 +76,6 @@ public final class FileUtils {
         }
     }
 
-    public static List<Ship> loadShips() {
-        return load(shipsFile, shipsType);
-    }
-
     public static List<Gallery> loadGalleries() {
         return load(galleriesFile, galleriesType);
     }
@@ -88,8 +84,8 @@ public final class FileUtils {
         return load(quotesFile, quotesType);
     }
 
-    public static void saveShips(List<Ship> shipList) {
-        save(shipsFile, shipsType, shipList);
+    public static List<Ship> loadShips() {
+        return load(shipsFile, shipsType);
     }
 
     public static void saveGalleries(List<Gallery> galleryList) {
@@ -98,5 +94,9 @@ public final class FileUtils {
 
     public static void saveQuotes(List<Quotes> quotesList) {
         save(quotesFile, quotesType, quotesList);
+    }
+
+    public static void saveShips(List<Ship> shipList) {
+        save(shipsFile, shipsType, shipList);
     }
 }

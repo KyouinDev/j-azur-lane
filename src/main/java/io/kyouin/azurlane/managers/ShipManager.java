@@ -40,7 +40,11 @@ public class ShipManager implements IContainerManager<Ship> {
 
         Ship finalShip = ship;
 
-        shipList.stream().filter(s -> s.getName().equals(finalShip.getName())).findFirst().ifPresent(shipList::remove);
+        shipList.stream()
+                .filter(s -> s.getName().equals(finalShip.getName()))
+                .findFirst()
+                .ifPresent(shipList::remove);
+
         shipList.add(ship);
     }
 

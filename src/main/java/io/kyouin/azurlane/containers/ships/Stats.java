@@ -10,15 +10,17 @@ import java.util.stream.IntStream;
 
 public class Stats {
 
+    private final static String TABLE_CELLS = "table:eq(0) > * td";
+
     private final String name;
     private final Map<StatsType, String> values;
 
     public static Stats fromElement(Element tabbertab) {
-        String name = tabbertab.attr("title").trim().replaceAll(" ", "");
+        String name = tabbertab.attr("title").replaceAll(" ", "");
         Map<StatsType, String> values = new LinkedHashMap<>();
 
-        Elements td = tabbertab.selectFirst("table").select("td");
-        IntStream.range(0, td.size()).forEach(i -> values.put(StatsType.values()[i], td.get(i).text().trim()));
+        Elements td = tabbertab.select(TABLE_CELLS);
+        IntStream.range(0, td.size()).forEach(i -> values.put(StatsType.values()[i], td.get(i).text()));
 
         return new Stats(name, values);
     }

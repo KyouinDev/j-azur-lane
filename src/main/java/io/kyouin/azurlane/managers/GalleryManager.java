@@ -40,7 +40,11 @@ public class GalleryManager implements IContainerManager<Gallery> {
 
         Gallery finalGallery = gallery;
 
-        galleryList.stream().filter(s -> s.getName().equals(finalGallery.getName())).findFirst().ifPresent(galleryList::remove);
+        galleryList.stream()
+                .filter(s -> s.getName().equals(finalGallery.getName()))
+                .findFirst()
+                .ifPresent(galleryList::remove);
+
         galleryList.add(finalGallery);
     }
 

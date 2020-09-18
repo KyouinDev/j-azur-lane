@@ -7,31 +7,31 @@ import java.util.stream.Collectors;
 
 public class SkinQuotes {
 
+    private final static String TABLE_ROWS = "table > tbody > tr:gt(0)";
+
     private final String skinName;
-    private final List<Quote> quotes;
+    private final List<QuoteLine> quoteLines;
 
     public static SkinQuotes fromElement(Element h3) {
-        String skinName = h3.text().trim();
-        Element tbody = h3.nextElementSibling().selectFirst("table > tbody");
+        String skinName = h3.text();
 
-        List<Quote> quotes = tbody.select("tr").stream()
-                .skip(1)
-                .map(Quote::fromElement)
+        List<QuoteLine> quoteLines = h3.nextElementSibling().select(TABLE_ROWS).stream()
+                .map(QuoteLine::fromElement)
                 .collect(Collectors.toList());
 
-        return new SkinQuotes(skinName, quotes);
+        return new SkinQuotes(skinName, quoteLines);
     }
 
-    public SkinQuotes(String skinName, List<Quote> quotes) {
+    public SkinQuotes(String skinName, List<QuoteLine> quoteLines) {
         this.skinName = skinName;
-        this.quotes = quotes;
+        this.quoteLines = quoteLines;
     }
 
     public String getSkinName() {
         return skinName;
     }
 
-    public List<Quote> getQuotes() {
-        return quotes;
+    public List<QuoteLine> getQuotes() {
+        return quoteLines;
     }
 }

@@ -3,16 +3,24 @@ package io.kyouin.azurlane.containers.galleries;
 import org.jsoup.nodes.Element;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Gallery {
+
+    private final static String SHIP_NAME = "h1#firstHeading";
+    private final static String SKIN_DIV = "div.shipskin";
 
     private final String name;
     private final List<Skin> skins;
 
     public static Gallery fromElement(Element content) {
-        String name = content.selectFirst("h1#firstHeading").text().trim().replace("/Gallery", "");
-        List<Skin> skins = content.select("div.shipskin").stream().map(Skin::fromElement).collect(Collectors.toList());
+        String name = content.selectFirst(SHIP_NAME).text().split("/")[0];
+
+        List<Skin> skins = content.select(SKIN_DIV).stream()
+                .map(Skin::fromElement)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         return new Gallery(name, skins);
     }

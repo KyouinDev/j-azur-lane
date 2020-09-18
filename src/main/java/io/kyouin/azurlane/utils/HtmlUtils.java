@@ -8,13 +8,13 @@ import java.io.IOException;
 
 public final class HtmlUtils {
 
-    private static long lastRequestMs = System.currentTimeMillis();
+    private static long lastRequestMs = 0;
 
     private HtmlUtils() {
         //nothing
     }
 
-    public static Element getBody(String url) {
+    public synchronized static Element getBody(String url) {
         long ms = System.currentTimeMillis() - lastRequestMs;
 
         try {
@@ -28,8 +28,11 @@ public final class HtmlUtils {
         try {
             doc = Jsoup.connect(url)
                     .userAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
-                    .ignoreContentType(true).ignoreHttpErrors(true).followRedirects(false)
-                    .timeout(30 * 1000).get();
+                    .ignoreContentType(true)
+                    .ignoreHttpErrors(true)
+                    .followRedirects(false)
+                    .timeout(30 * 1000)
+                    .get();
 
             lastRequestMs = System.currentTimeMillis();
         } catch (IOException ignored) {}

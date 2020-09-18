@@ -8,16 +8,21 @@ import java.util.stream.Collectors;
 
 public class Quotes {
 
+    private final static String SHIP_NAME = "h1#firstHeading";
+    private final static String EN_QUOTES = "div[title*=English]";
+    private final static String HEADERS = "h3";
+
     private final String name;
     private final List<SkinQuotes> skinQuotes;
 
     public static Quotes fromElement(Element content) {
-        String name = content.selectFirst("h1#firstHeading").text().trim().replace("/Quotes", "");
-        Element englishTab = content.selectFirst("div[title*=English]");
+        String name = content.selectFirst(SHIP_NAME).text().split("/")[0];
+
+        Element englishTab = content.selectFirst(EN_QUOTES);
 
         if (englishTab == null) return new Quotes(name, new ArrayList<>());
 
-        List<SkinQuotes> skinQuotes = englishTab.select("h3").stream()
+        List<SkinQuotes> skinQuotes = englishTab.select(HEADERS).stream()
                 .map(SkinQuotes::fromElement)
                 .collect(Collectors.toList());
 

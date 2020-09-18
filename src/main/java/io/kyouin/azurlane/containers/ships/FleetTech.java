@@ -1,9 +1,15 @@
 package io.kyouin.azurlane.containers.ships;
 
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 public class FleetTech {
+
+    private final static String TECH_POINTS_LINKS = "a[title*=Tech point]";
+    private final static String COLLECTION = "th:contains(Collection)";
+    private final static String LVL120 = "th:contains(Level 120)";
+    private final static String MLB = "th:contains(Max LB)";
+    private final static String TDS = "td";
+    private final static String IMGS = "img";
 
     private final String collectionBonus;
     private final String level120Bonus;
@@ -13,25 +19,23 @@ public class FleetTech {
     private final Integer totalPoints;
 
     public static FleetTech fromElement(Element tbody) {
-        Elements td = tbody.select("td");
+        if (tbody.select(TDS).size() == 1) return null;
 
-        if (td.size() == 1) return null;
+        tbody.select(TECH_POINTS_LINKS).remove();
+        tbody.select(IMGS).forEach(img -> img.prepend(img.attr("alt")));
 
-        td.select("a[title*=Tech point]").remove();
-        td.select("img").forEach(img -> img.prepend(img.attr("alt")));
+        String collectionBonus = tbody.select(COLLECTION).first().nextElementSibling().text().replaceAll(" ", " ");
+        String level120Bonus = tbody.select(LVL120).first().nextElementSibling().text().replaceAll(" ", " ");
 
-        String collectionBonus = td.get(0).text().trim().replaceAll(" ", " ");
-        String level120Bonus = td.get(1).text().trim().replaceAll(" ", " ");
+        Element collectionPointsElement = tbody.select(COLLECTION).last().nextElementSibling();
+        Element maxLimitBreakPointsElement = tbody.select(MLB).first().nextElementSibling();
+        Element level120PointsElement = tbody.select(LVL120).last().nextElementSibling();
+        Element totalPointsElement = tbody.select(COLLECTION).last().nextElementSibling().nextElementSibling();
 
-        Integer collectionPoints = null;
-        Integer maxLimitBreakPoints = null;
-        Integer level120Points = null;
-        Integer totalPoints = null;
-
-        if (!td.get(2).text().isEmpty()) collectionPoints = Integer.parseInt(td.get(2).text().trim());
-        if (!td.get(4).text().isEmpty()) maxLimitBreakPoints = Integer.parseInt(td.get(4).text().trim());
-        if (!td.get(5).text().isEmpty()) level120Points = Integer.parseInt(td.get(5).text().trim());
-        if (!td.get(3).text().isEmpty()) totalPoints = Integer.parseInt(td.get(3).text().trim());
+        Integer collectionPoints = collectionPointsElement == null || collectionPointsElement.text().isEmpty() ? null : Integer.parseInt(collectionPointsElement.text());
+        Integer maxLimitBreakPoints = collectionPointsElement == null || maxLimitBreakPointsElement.text().isEmpty() ? null : Integer.parseInt(maxLimitBreakPointsElement.text());
+        Integer level120Points = collectionPointsElement == null || level120PointsElement.text().isEmpty() ? null : Integer.parseInt(level120PointsElement.text());
+        Integer totalPoints = collectionPointsElement == null || totalPointsElement.text().isEmpty() ? null : Integer.parseInt(totalPointsElement.text());
 
         return new FleetTech(collectionBonus, level120Bonus, collectionPoints, maxLimitBreakPoints, level120Points, totalPoints);
     }

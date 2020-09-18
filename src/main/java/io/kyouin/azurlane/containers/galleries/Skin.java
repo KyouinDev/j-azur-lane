@@ -4,6 +4,17 @@ import org.jsoup.nodes.Element;
 
 public class Skin {
 
+    private final static String SKIN_HEADER = "div.shipskin-header";
+    private final static String SKIN_IMAGE = "div.shipskin-image > * img";
+    private final static String SKIN_CHIBI = "div.shipskin-chibi > * img";
+    private final static String OBTAINED_FROM = "th:contains(Obtained From)";
+    private final static String AVAILABLE_EN = "th:contains(EN Client)";
+    private final static String AVAILABLE_CN = "th:contains(CN Client)";
+    private final static String AVAILABLE_JP = "th:contains(JP Client)";
+    private final static String LIVE2D = "th:contains(Live2D Model)";
+    private final static String COST = "th:contains(Cost)";
+    private final static String GEM = "img[alt=\"Gem\"]";
+
     private final String name;
     private final String imageUrl;
     private final String imageChibiUrl;
@@ -15,44 +26,37 @@ public class Skin {
     private final Integer cost;
 
     public static Skin fromElement(Element shipskin) {
-        String nameText = shipskin.selectFirst("div.shipskin-header").text().trim();
+        if (shipskin.select(SKIN_IMAGE).isEmpty()) return null;
+
+        String nameText = shipskin.selectFirst(SKIN_HEADER).text();
         String name = nameText.substring(nameText.indexOf(':') + 2);
+        String imageUrl = shipskin.selectFirst(SKIN_IMAGE).attr("abs:src").split("\\.png")[0].replace("thumb/", "") + ".png";
 
-        String src = shipskin.selectFirst("div.shipskin-image > a > img").attr("abs:src");
-        String imageUrl = src.split("\\.png")[0].replace("thumb/", "") + ".png";
+        Element chibiElement = shipskin.selectFirst(SKIN_CHIBI);
+        String imageChibiUrl = chibiElement == null ? null : chibiElement.attr("abs:src");
 
-        String imageChibiUrl = null;
+        String obtainedFrom = shipskin.selectFirst(OBTAINED_FROM).nextElementSibling().text();
+        boolean live2D = shipskin.selectFirst(LIVE2D).nextElementSibling().text().equals("Yes");
 
-        if (shipskin.select("div.shipskin-chibi > a.new").isEmpty())
-            imageChibiUrl = shipskin.selectFirst("div.shipskin-chibi > a > img").attr("abs:src");
+        if (shipskin.select(AVAILABLE_EN).isEmpty()) return new Skin(name, imageUrl, imageChibiUrl, obtainedFrom, live2D);
 
-        String obtainedFrom = shipskin.selectFirst("th:contains(Obtained From)").nextElementSibling().text().trim();
-        boolean live2D = shipskin.selectFirst("th:contains(Live2D Model)").nextElementSibling().text().trim().equals("Yes");
+        String availableEN = getSkinAvailable(shipskin, AVAILABLE_EN);
+        String availableCN = getSkinAvailable(shipskin, AVAILABLE_CN);
+        String availableJP = getSkinAvailable(shipskin, AVAILABLE_JP);
 
-        if (shipskin.select("th:contains(EN Client)").isEmpty()) return new Skin(name, imageUrl, imageChibiUrl, obtainedFrom, live2D);
-
-        String availableEN = getSkinAvailable(shipskin, "EN");
-        String availableCN = getSkinAvailable(shipskin, "CN");
-        String availableJP = getSkinAvailable(shipskin, "JP");
-
-        Integer cost = null;
-
-        if (!shipskin.select("th:contains(Cost)").isEmpty()) {
-            Element costElement = shipskin.selectFirst("th:contains(Cost)").nextElementSibling();
-
-            if (costElement.selectFirst("img").attr("alt").equals("Gem")) cost = Integer.parseInt(costElement.text().trim());
-        }
+        Element costElement = shipskin.selectFirst(COST) == null ? null : shipskin.selectFirst(COST).nextElementSibling();
+        Integer cost = costElement == null || costElement.selectFirst(GEM) == null ? null : Integer.parseInt(costElement.text());
 
         return new Skin(name, imageUrl, imageChibiUrl, availableEN, availableCN, availableJP, obtainedFrom, live2D, cost);
     }
 
     private static String getSkinAvailable(Element shipskin, String client) {
-        Element available = shipskin.selectFirst("th:contains(" + client + " Client)").nextElementSibling();
-        String text = available.text().trim();
+        Element available = shipskin.selectFirst(client).nextElementSibling();
+        String text = available.text();
 
         if ("skin unavailable".equals(text)) return text;
 
-        return available.nextElementSibling().text().trim();
+        return available.nextElementSibling().text();
     }
 
     public Skin(String name, String imageUrl, String imageChibiUrl, String availableEN, String availableCN, String availableJP, String obtainedFrom, boolean live2D, Integer cost) {

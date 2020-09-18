@@ -9,6 +9,21 @@ import java.util.stream.Collectors;
 
 public class Ship {
 
+    private final static String SHIP_NAME = "h1#firstHeading";
+    private final static String CONTENT = "div.mw-parser-output";
+    private final static String STATISTICS = "table#Statistics > * div.tabbertab";
+    private final static String EQUIPMENT = "table#Gear > tbody > tr:gt(1)";
+    private final static String LIMIT_BREAKS = "table#Limit_breaks > tbody";
+    private final static String DEVELOPMENT_LEVELS = "table#Development_levels > tbody";
+    private final static String SKILLS = "table#Skills > tbody > tr";
+    private final static String SKILL_HEADER = "th";
+    private final static String FLEET_TECH = "table#Fleet_technology > tbody";
+    private final static String DROP_STAGES = "table#Drop > tbody";
+    private final static String CHAPTERS = "tr:gt(1), tr:lt(14)";
+    private final static String OBTAINMENT = "table#Obtainment > tbody";
+    private final static String OBTAINMENT_ROW = "td";
+    private final static String VALUES = "table#Values > tbody";
+
     private final String name;
     private final Info info;
     private final List<Stats> stats;
@@ -22,57 +37,43 @@ public class Ship {
     private final Values values;
 
     public static Ship fromElement(Element content) {
-        String name = content.selectFirst("h1#firstHeading").text().trim();
-        Element divContent = content.selectFirst("div.mw-parser-output");
+        String name = content.selectFirst(SHIP_NAME).text();
+        Element divContent = content.selectFirst(CONTENT);
         Info info = Info.fromElement(divContent);
 
-        List<Stats> statistics = divContent.selectFirst("table#Statistics").select("div.tabbertab").stream()
+        List<Stats> statistics = divContent.select(STATISTICS).stream()
                 .map(Stats::fromElement)
                 .sorted(Comparator.comparing(Stats::getName))
                 .collect(Collectors.toList());
 
-        List<Equipment> equipment = divContent.select("table#Gear > tbody > tr").stream()
-                .skip(2)
+        List<Equipment> equipment = divContent.select(EQUIPMENT).stream()
                 .map(Equipment::fromElement)
                 .collect(Collectors.toList());
 
-        LimitBreaks limitBreaks = null;
-        DevelopmentLevels developmentLevels = null;
+        Element limitBreaksElement = divContent.selectFirst(LIMIT_BREAKS);
+        LimitBreaks limitBreaks = limitBreaksElement == null ? null : LimitBreaks.fromElement(limitBreaksElement);
 
-        if (!divContent.select("table#Limit_breaks").isEmpty()) {
-            limitBreaks = LimitBreaks.fromElement(divContent.selectFirst("table#Limit_breaks > tbody"));
-        }
+        Element developmentLevelsElement = divContent.selectFirst(DEVELOPMENT_LEVELS);
+        DevelopmentLevels developmentLevels = developmentLevelsElement == null ? null : DevelopmentLevels.fromElement(developmentLevelsElement);
 
-        if (!divContent.select("table#Development_levels").isEmpty()) {
-            developmentLevels = DevelopmentLevels.fromElement(divContent.selectFirst("table#Development_levels > tbody"));
-        }
-
-        List<Skill> skills = divContent.select("table#Skills > tbody > tr").stream()
-                .filter(skillRow -> !skillRow.select("th").isEmpty())
-                .filter(skillRow -> SkillType.fromStyle(skillRow.selectFirst("th").attr("style")) != null)
+        List<Skill> skills = divContent.select(SKILLS).stream()
+                .filter(skillRow -> !skillRow.select(SKILL_HEADER).isEmpty())
+                .filter(skillRow -> SkillType.fromStyle(skillRow.selectFirst(SKILL_HEADER).attr("style")) != null)
                 .map(Skill::fromElement)
                 .collect(Collectors.toList());
 
-        FleetTech fleetTech = FleetTech.fromElement(divContent.selectFirst("table#Fleet_technology"));
+        FleetTech fleetTech = FleetTech.fromElement(divContent.selectFirst(FLEET_TECH));
 
-        List<ChapterDrop> chapterDrops = null;
+        Element chapterDropsElement = divContent.selectFirst(DROP_STAGES);
+        List<ChapterDrop> chapterDrops = chapterDropsElement == null ? null : chapterDropsElement.select(CHAPTERS).stream()
+                .map(ChapterDrop::fromElement)
+                .collect(Collectors.toList());
 
-        if (!divContent.select("table#Drop").isEmpty()) {
-            chapterDrops = divContent.select("table#Drop > tbody > tr").stream()
-                    .skip(2).limit(13)
-                    .map(ChapterDrop::fromElement)
-                    .collect(Collectors.toList());
-        }
+        Element obtainmentElement = divContent.selectFirst(OBTAINMENT);
+        Obtainment obtainment = obtainmentElement == null ? null : Obtainment.fromElement(obtainmentElement.selectFirst(OBTAINMENT_ROW));
 
-        Obtainment obtainment = null;
-
-        if (!divContent.select("table#Obtainment").isEmpty()) {
-            obtainment = Obtainment.fromElement(divContent.selectFirst("table#Obtainment").selectFirst("td"));
-        }
-
-        Values values = null;
-
-        if (!divContent.select("table#Values").isEmpty()) values = Values.fromElement(divContent.selectFirst("table#Values"));
+        Element valuesElement = divContent.selectFirst(VALUES);
+        Values values = valuesElement == null ? null : Values.fromElement(valuesElement);
 
         return new Ship(name, info, statistics, equipment, limitBreaks, developmentLevels, skills, fleetTech, chapterDrops, obtainment, values);
     }

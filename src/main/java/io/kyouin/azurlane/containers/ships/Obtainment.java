@@ -4,18 +4,18 @@ import org.jsoup.nodes.Element;
 
 public class Obtainment {
 
+    private final static String BANNER_NOTES = "div:eq(0)";
+    private final static String GENERAL_NOTES = "div:eq(1)";
+
     private final String bannerNotes;
     private final String generalNotes;
 
     public static Obtainment fromElement(Element td) {
-        String bannerText = td.select("div").first().text();
-        String generalText = td.select("div").last().text();
+        String bannerText = td.select(BANNER_NOTES).text().replaceAll(" ?(Light:|Heavy:|Special:|Limited:)", "\n$1").trim();
+        String generalText = td.select(GENERAL_NOTES).text().replaceFirst("^Notes: ?", "");
 
-        bannerText = bannerText.replaceAll(" ?(Light:|Heavy:|Special:|Limited:)", "\n$1");
-        generalText = generalText.replaceFirst("^Notes:", "");
-
-        String bannerNotes = bannerText.isEmpty() ? null : bannerText.trim();
-        String generalNotes = generalText.isEmpty() ? null : generalText.trim();
+        String bannerNotes = bannerText.isEmpty() ? null : bannerText;
+        String generalNotes = generalText.isEmpty() ? null : generalText;
 
         return new Obtainment(bannerNotes, generalNotes);
     }

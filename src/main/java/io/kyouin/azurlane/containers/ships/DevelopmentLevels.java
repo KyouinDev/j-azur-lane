@@ -1,9 +1,19 @@
 package io.kyouin.azurlane.containers.ships;
 
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 public class DevelopmentLevels {
+
+    private final static String FIRST_DL = "th:contains(5)";
+    private final static String SECOND_DL = "th:contains(10)";
+    private final static String THIRD_DL = "th:contains(15)";
+    private final static String FOURTH_DL = "th:contains(20)";
+    private final static String FIFTH_DL = "th:contains(25)";
+    private final static String SIXTH_DL = "th:contains(30)";
+    private final static String TDS = "td";
+    private final static String IMGS = "img";
+    private final static String USELESS_TAGS = "li.mw-empty-elt";
+    private final static String LIST_ELEMENTS = "li";
 
     private final String first;
     private final String second;
@@ -13,20 +23,18 @@ public class DevelopmentLevels {
     private final String sixth;
 
     public static DevelopmentLevels fromElement(Element tbody) {
-        Elements td = tbody.select("td");
+        if (tbody.select(TDS).size() < 6) return null;
 
-        if (td.size() < 6) return null;
+        tbody.select(IMGS).forEach(img -> img.prepend(img.attr("alt")));
+        tbody.select(USELESS_TAGS).remove();
+        tbody.select(LIST_ELEMENTS).prepend("• ");
 
-        td.select("img").forEach(img -> img.prepend(img.attr("alt")));
-        td.select("li.mw-empty-elt").remove();
-        td.select("li").prepend("• ");
-
-        String first = td.get(0).text().replaceAll(" ?•", "\n•").trim();
-        String second = td.get(1).text().replaceAll(" ?•", "\n•").trim();
-        String third = td.get(2).text().replaceAll(" ?•", "\n•").trim();
-        String fourth = td.get(3).text().replaceAll(" ?•", "\n•").trim();
-        String fifth = td.get(4).text().replaceAll(" ?•", "\n•").trim();
-        String sixth = td.get(5).text().replaceAll(" ?•", "\n•").trim();
+        String first = tbody.selectFirst(FIRST_DL).nextElementSibling().text().replaceAll(" ?•", "\n•");
+        String second = tbody.selectFirst(SECOND_DL).nextElementSibling().text().replaceAll(" ?•", "\n•");
+        String third = tbody.selectFirst(THIRD_DL).nextElementSibling().text().replaceAll(" ?•", "\n•");
+        String fourth = tbody.selectFirst(FOURTH_DL).nextElementSibling().text().replaceAll(" ?•", "\n•");
+        String fifth = tbody.selectFirst(FIFTH_DL).nextElementSibling().text().replaceAll(" ?•", "\n•");
+        String sixth = tbody.selectFirst(SIXTH_DL).nextElementSibling().text().replaceAll(" ?•", "\n•");
 
         return new DevelopmentLevels(first, second, third, fourth, fifth, sixth);
     }

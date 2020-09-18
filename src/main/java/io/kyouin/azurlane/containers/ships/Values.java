@@ -4,14 +4,18 @@ import org.jsoup.nodes.Element;
 
 public class Values {
 
+    private final static String ENHANCE = "td:eq(0)";
+    private final static String SCRAP = "td:eq(1)";
+    private final static String IMGS = "img";
+
     private final String enhance;
     private final String scrap;
 
     public static Values fromElement(Element tbody) {
-        tbody.select("img").forEach(img -> img.prepend(img.attr("alt")));
+        tbody.select(IMGS).forEach(img -> img.prepend(img.attr("alt")));
 
-        String enhance = tbody.select("td").first().text().trim();
-        String scrap = tbody.select("td").last().text().trim();
+        String enhance = tbody.selectFirst(ENHANCE).text();
+        String scrap = tbody.selectFirst(SCRAP).text();
 
         return new Values(enhance, scrap);
     }

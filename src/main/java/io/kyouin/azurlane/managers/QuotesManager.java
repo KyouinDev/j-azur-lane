@@ -40,7 +40,11 @@ public class QuotesManager implements IContainerManager<Quotes> {
 
         Quotes finalQuotes = quotes;
 
-        quotesList.stream().filter(s -> s.getName().equals(finalQuotes.getName())).findFirst().ifPresent(quotesList::remove);
+        quotesList.stream()
+                .filter(s -> s.getName().equals(finalQuotes.getName()))
+                .findFirst()
+                .ifPresent(quotesList::remove);
+
         quotesList.add(quotes);
     }
 
