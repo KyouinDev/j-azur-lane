@@ -16,7 +16,6 @@ public class Gallery {
 
     public static Gallery fromElement(Element content) {
         String name = content.selectFirst(SHIP_NAME).text().split("/")[0];
-
         List<Skin> skins = content.select(SKIN_DIV).stream()
                 .map(Skin::fromElement)
                 .filter(Objects::nonNull)

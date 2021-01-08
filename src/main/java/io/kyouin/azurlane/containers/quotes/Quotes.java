@@ -9,36 +9,34 @@ import java.util.stream.Collectors;
 public class Quotes {
 
     private final static String SHIP_NAME = "h1#firstHeading";
-    private final static String EN_QUOTES = "div[title*=English]";
-    private final static String HEADERS = "h3";
+    private final static String EN_LINES = "div[title*=English]";
 
     private final String name;
-    private final List<SkinQuotes> skinQuotes;
+    private final List<SkinLines> skinLines;
 
     public static Quotes fromElement(Element content) {
         String name = content.selectFirst(SHIP_NAME).text().split("/")[0];
-
-        Element englishTab = content.selectFirst(EN_QUOTES);
+        Element englishTab = content.selectFirst(EN_LINES);
 
         if (englishTab == null) return new Quotes(name, new ArrayList<>());
 
-        List<SkinQuotes> skinQuotes = englishTab.select(HEADERS).stream()
-                .map(SkinQuotes::fromElement)
+        List<SkinLines> skinLines = englishTab.select("h3").stream()
+                .map(SkinLines::fromElement)
                 .collect(Collectors.toList());
 
-        return new Quotes(name, skinQuotes);
+        return new Quotes(name, skinLines);
     }
 
-    public Quotes(String name, List<SkinQuotes> skinQuotes) {
+    public Quotes(String name, List<SkinLines> skinLines) {
         this.name = name;
-        this.skinQuotes = skinQuotes;
+        this.skinLines = skinLines;
     }
 
     public String getName() {
         return name;
     }
 
-    public List<SkinQuotes> getSkinQuotes() {
-        return skinQuotes;
+    public List<SkinLines> getSkinLines() {
+        return skinLines;
     }
 }

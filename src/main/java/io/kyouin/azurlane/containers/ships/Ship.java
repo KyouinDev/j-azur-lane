@@ -5,6 +5,7 @@ import org.jsoup.nodes.Element;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Ship {
@@ -12,22 +13,19 @@ public class Ship {
     private final static String SHIP_NAME = "h1#firstHeading";
     private final static String CONTENT = "div.mw-parser-output";
     private final static String STATISTICS = "table#Statistics > * div.tabbertab";
-    private final static String EQUIPMENT = "table#Gear > tbody > tr:gt(1)";
+    private final static String GEAR = "tbody:has(* > th:contains(Gear))";
     private final static String LIMIT_BREAKS = "table#Limit_breaks > tbody";
     private final static String DEVELOPMENT_LEVELS = "table#Development_levels > tbody";
     private final static String SKILLS = "table#Skills > tbody > tr";
-    private final static String SKILL_HEADER = "th";
     private final static String FLEET_TECH = "table#Fleet_technology > tbody";
     private final static String DROP_STAGES = "table#Drop > tbody";
-    private final static String CHAPTERS = "tr";
-    private final static String OBTAINMENT = "table#Obtainment > tbody";
-    private final static String OBTAINMENT_ROW = "td";
+    private final static String CONSTRUCTION = "div#Construction:has(table)";
     private final static String VALUES = "table#Values > tbody";
 
     private final String name;
     private final Info info;
     private final List<Stats> stats;
-    private final List<Equipment> equipment;
+    private final List<GearSlot> gearSlots;
     private final LimitBreaks limitBreaks;
     private final DevelopmentLevels developmentLevels;
     private final List<Skill> skills;
@@ -38,6 +36,7 @@ public class Ship {
 
     public static Ship fromElement(Element content) {
         String name = content.selectFirst(SHIP_NAME).text();
+
         Element divContent = content.selectFirst(CONTENT);
         Info info = Info.fromElement(divContent);
 
@@ -46,45 +45,61 @@ public class Ship {
                 .sorted(Comparator.comparing(Stats::getName))
                 .collect(Collectors.toList());
 
-        List<Equipment> equipment = divContent.select(EQUIPMENT).stream()
-                .map(Equipment::fromElement)
+        List<GearSlot> gearSlots = divContent.selectFirst(GEAR).select("tr").stream()
+                .skip(2)
+                .map(GearSlot::fromElement)
                 .collect(Collectors.toList());
 
-        Element limitBreaksElement = divContent.selectFirst(LIMIT_BREAKS);
-        LimitBreaks limitBreaks = limitBreaksElement == null ? null : LimitBreaks.fromElement(limitBreaksElement);
+        LimitBreaks limitBreaks = null;
 
-        Element developmentLevelsElement = divContent.selectFirst(DEVELOPMENT_LEVELS);
-        DevelopmentLevels developmentLevels = developmentLevelsElement == null ? null : DevelopmentLevels.fromElement(developmentLevelsElement);
+        if (!divContent.select(LIMIT_BREAKS).isEmpty()) {
+            limitBreaks = LimitBreaks.fromElement(divContent.selectFirst(LIMIT_BREAKS));
+        }
+
+        DevelopmentLevels developmentLevels = null;
+
+        if (!divContent.select(DEVELOPMENT_LEVELS).isEmpty()) {
+            developmentLevels = DevelopmentLevels.fromElement(divContent.selectFirst(DEVELOPMENT_LEVELS));
+        }
 
         List<Skill> skills = divContent.select(SKILLS).stream()
-                .filter(skillRow -> !skillRow.select(SKILL_HEADER).isEmpty())
-                .filter(skillRow -> SkillType.fromStyle(skillRow.selectFirst(SKILL_HEADER).attr("style")) != null)
+                .filter(skillRow -> !skillRow.select("th").isEmpty())
+                .filter(skillRow -> SkillType.fromStyle(skillRow.selectFirst("th").attr("style")) != null)
                 .map(Skill::fromElement)
                 .collect(Collectors.toList());
 
         FleetTech fleetTech = FleetTech.fromElement(divContent.selectFirst(FLEET_TECH));
+        List<ChapterDrop> chapterDrops = null;
 
-        Element chapterDropsElement = divContent.selectFirst(DROP_STAGES);
-        List<ChapterDrop> chapterDrops = chapterDropsElement == null ? null : chapterDropsElement.select(CHAPTERS).stream()
-                .skip(2)
-                .limit(13)
-                .map(ChapterDrop::fromElement)
-                .collect(Collectors.toList());
+        if (!divContent.select(DROP_STAGES).isEmpty()) {
+            chapterDrops = divContent.selectFirst(DROP_STAGES).select("tr").stream()
+                    .skip(2)
+                    .limit(13)
+                    .map(ChapterDrop::fromElement)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        }
 
-        Element obtainmentElement = divContent.selectFirst(OBTAINMENT);
-        Obtainment obtainment = obtainmentElement == null ? null : Obtainment.fromElement(obtainmentElement.selectFirst(OBTAINMENT_ROW));
+        Obtainment obtainment = null;
 
-        Element valuesElement = divContent.selectFirst(VALUES);
-        Values values = valuesElement == null ? null : Values.fromElement(valuesElement);
+        if (!divContent.select(CONSTRUCTION).isEmpty()) {
+            obtainment = Obtainment.fromElement(divContent);
+        }
 
-        return new Ship(name, info, statistics, equipment, limitBreaks, developmentLevels, skills, fleetTech, chapterDrops, obtainment, values);
+        Values values = null;
+
+        if (!divContent.select(VALUES).isEmpty()) {
+            values = Values.fromElement(divContent.selectFirst(VALUES));
+        }
+
+        return new Ship(name, info, statistics, gearSlots, limitBreaks, developmentLevels, skills, fleetTech, chapterDrops, obtainment, values);
     }
 
-    public Ship(String name, Info info, List<Stats> stats, List<Equipment> equipment, LimitBreaks limitBreaks, DevelopmentLevels developmentLevels, List<Skill> skills, FleetTech fleetTech, List<ChapterDrop> chapterDrops, Obtainment obtainment, Values values) {
+    public Ship(String name, Info info, List<Stats> stats, List<GearSlot> gearSlots, LimitBreaks limitBreaks, DevelopmentLevels developmentLevels, List<Skill> skills, FleetTech fleetTech, List<ChapterDrop> chapterDrops, Obtainment obtainment, Values values) {
         this.name = name;
         this.info = info;
         this.stats = stats;
-        this.equipment = equipment;
+        this.gearSlots = gearSlots;
         this.limitBreaks = limitBreaks;
         this.developmentLevels = developmentLevels;
         this.skills = skills;
@@ -98,6 +113,17 @@ public class Ship {
         return name;
     }
 
+    public String getSimplifiedName() {
+        return name
+                .replaceAll("[()\\-']", "")
+                .replaceAll("[âäàåã]", "a")
+                .replaceAll("[êëéè]", "e")
+                .replaceAll("[ïîì]", "i")
+                .replaceAll("[ôöò]", "o")
+                .replaceAll("[üù]", "u")
+                .replaceAll("µ", "muse");
+    }
+
     public Info getInfo() {
         return info;
     }
@@ -106,8 +132,8 @@ public class Ship {
         return stats;
     }
 
-    public List<Equipment> getEquipment() {
-        return equipment;
+    public List<GearSlot> getGearSlots() {
+        return gearSlots;
     }
 
     public LimitBreaks getLimitBreaks() {

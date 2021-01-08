@@ -8,7 +8,7 @@ public interface IContainerManager<T> {
 
     List<T> getAll();
 
-    void update(String name);
+    boolean update(String name);
 
     void updateAll();
 }

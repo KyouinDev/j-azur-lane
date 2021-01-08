@@ -26,17 +26,17 @@ public class ShipManager implements IContainerManager<Ship> {
     }
 
     @Override
-    public void update(String name) {
+    public boolean update(String name) {
         Ship ship = null;
 
         try {
             ship = Ship.fromElement(HtmlUtils.getBody(AzurConstants.WIKI_SHIP.replace("{ship}", name.replaceAll(" ", "_"))));
         } catch (Exception e) {
-            System.out.println("Failed: " + name);
+            System.out.println("Failed to update: " + name);
             e.printStackTrace();
         }
 
-        if (ship == null) return;
+        if (ship == null) return false;
 
         Ship finalShip = ship;
 
@@ -44,8 +44,9 @@ public class ShipManager implements IContainerManager<Ship> {
                 .filter(s -> s.getName().equals(finalShip.getName()))
                 .findFirst()
                 .ifPresent(shipList::remove);
-
         shipList.add(ship);
+
+        return true;
     }
 
     @Override

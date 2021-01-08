@@ -39,10 +39,12 @@ public final class AzurLane {
         return shipManager;
     }
 
-    public void fullUpdateShip(String name) {
-        galleryManager.update(name);
-        quotesManager.update(name);
-        shipManager.update(name);
+    public boolean fullUpdateShip(String name) {
+        boolean gSuccess = galleryManager.update(name);
+        boolean qSuccess = quotesManager.update(name);
+        boolean sSuccess = shipManager.update(name);
+
+        return gSuccess && qSuccess && sSuccess;
     }
 
     public void saveToFiles() {

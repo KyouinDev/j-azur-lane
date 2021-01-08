@@ -34,7 +34,9 @@ public class Info {
     private final boolean retrofit;
 
     public static Info fromElement(Element content) {
-        content.selectFirst(USELESS_LINK).remove();
+        if (!content.select(USELESS_LINK).isEmpty()) {
+            content.selectFirst(USELESS_LINK).remove();
+        }
 
         String fullName = content.selectFirst(FULL_NAME).text();
         String bannerUrl = content.selectFirst(BANNER_IMAGE).attr("abs:src");
@@ -42,9 +44,14 @@ public class Info {
         String constructionTime = content.selectFirst(CONSTRUCTION_TIME).nextElementSibling().text();
         String rarity = content.selectFirst(RARITY).nextElementSibling().text();
         String shipClass = content.selectFirst(CLASS).nextElementSibling().text();
+
+        if ("".equals(shipClass)) {
+            shipClass = "None";
+        }
+
         String id = content.selectFirst(ID).nextElementSibling().text();
         String faction = content.selectFirst(FACTION).nextElementSibling().text();
-        String classification = content.selectFirst(CLASSIFICATION).nextElementSibling().text();
+        String classification = content.selectFirst(CLASSIFICATION).nextElementSibling().text().replaceAll("[  ]", "");
         String illustrator = content.selectFirst(ILLUSTRATOR).nextElementSibling().text().replaceAll("[  ]", "");
         String voiceActor = content.selectFirst(VOICE_ACTOR).nextElementSibling().text().replaceAll("[  ]", "");
         boolean secretaryQuest = !content.select(QUESTLINE).isEmpty();

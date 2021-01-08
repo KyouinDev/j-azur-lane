@@ -10,10 +10,7 @@ public class DevelopmentLevels {
     private final static String FOURTH_DL = "th:contains(20)";
     private final static String FIFTH_DL = "th:contains(25)";
     private final static String SIXTH_DL = "th:contains(30)";
-    private final static String TDS = "td";
-    private final static String IMGS = "img";
     private final static String USELESS_TAGS = "li.mw-empty-elt";
-    private final static String LIST_ELEMENTS = "li";
 
     private final String first;
     private final String second;
@@ -23,18 +20,18 @@ public class DevelopmentLevels {
     private final String sixth;
 
     public static DevelopmentLevels fromElement(Element tbody) {
-        if (tbody.select(TDS).size() < 6) return null;
+        if (tbody.select("td").size() < 6) return null;
 
-        tbody.select(IMGS).forEach(img -> img.prepend(img.attr("alt")));
         tbody.select(USELESS_TAGS).remove();
-        tbody.select(LIST_ELEMENTS).prepend("• ");
+        tbody.select("img").forEach(img -> img.prepend(img.attr("alt")));
+        tbody.select("li").prepend("• ");
 
-        String first = tbody.selectFirst(FIRST_DL).nextElementSibling().text().replaceAll(" ?•", "\n•");
-        String second = tbody.selectFirst(SECOND_DL).nextElementSibling().text().replaceAll(" ?•", "\n•");
-        String third = tbody.selectFirst(THIRD_DL).nextElementSibling().text().replaceAll(" ?•", "\n•");
-        String fourth = tbody.selectFirst(FOURTH_DL).nextElementSibling().text().replaceAll(" ?•", "\n•");
-        String fifth = tbody.selectFirst(FIFTH_DL).nextElementSibling().text().replaceAll(" ?•", "\n•");
-        String sixth = tbody.selectFirst(SIXTH_DL).nextElementSibling().text().replaceAll(" ?•", "\n•");
+        String first = tbody.selectFirst(FIRST_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").trim();
+        String second = tbody.selectFirst(SECOND_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").trim();
+        String third = tbody.selectFirst(THIRD_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").trim();
+        String fourth = tbody.selectFirst(FOURTH_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").trim();
+        String fifth = tbody.selectFirst(FIFTH_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").trim();
+        String sixth = tbody.selectFirst(SIXTH_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").trim();
 
         return new DevelopmentLevels(first, second, third, fourth, fifth, sixth);
     }

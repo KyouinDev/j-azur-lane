@@ -26,17 +26,17 @@ public class QuotesManager implements IContainerManager<Quotes> {
     }
 
     @Override
-    public void update(String name) {
+    public boolean update(String name) {
         Quotes quotes = null;
 
         try {
             quotes = Quotes.fromElement(HtmlUtils.getBody(AzurConstants.WIKI_SHIP_QUOTES.replace("{ship}", name.replaceAll(" ", "_"))));
         } catch (Exception e) {
-            System.out.println("Failed: " + name);
+            System.out.println("Failed to update: " + name);
             e.printStackTrace();
         }
 
-        if (quotes == null) return;
+        if (quotes == null) return false;
 
         Quotes finalQuotes = quotes;
 
@@ -44,8 +44,9 @@ public class QuotesManager implements IContainerManager<Quotes> {
                 .filter(s -> s.getName().equals(finalQuotes.getName()))
                 .findFirst()
                 .ifPresent(quotesList::remove);
-
         quotesList.add(quotes);
+
+        return true;
     }
 
     @Override

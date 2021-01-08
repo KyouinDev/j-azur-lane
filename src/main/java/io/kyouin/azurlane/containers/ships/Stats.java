@@ -11,23 +11,38 @@ import java.util.stream.IntStream;
 public class Stats {
 
     private final static String TABLE_BODY = "table > tbody";
-    private final static String TABLE_CELLS = "td";
 
     private final String name;
-    private final Map<StatsType, String> values;
+    private final String armor;
+    private final Map<StatsType, Integer> values;
 
     public static Stats fromElement(Element tabbertab) {
         String name = tabbertab.attr("title").replaceAll(" ", "");
-        Map<StatsType, String> values = new LinkedHashMap<>();
 
-        Elements tds = tabbertab.selectFirst(TABLE_BODY).select(TABLE_CELLS);
-        IntStream.range(0, tds.size()).forEach(i -> values.put(StatsType.values()[i], tds.get(i).text()));
+        Elements tds = tabbertab.selectFirst(TABLE_BODY).select("td");
+        String armor = tds.get(1).text();
+        Map<StatsType, Integer> values = new LinkedHashMap<>();
 
-        return new Stats(name, values);
+        IntStream.range(0, tds.size()).forEach(i -> {
+            if (i == 1) return;
+
+            int stat;
+
+            try {
+                stat = Integer.parseInt(tds.get(i).text());
+            } catch (NumberFormatException e) {
+                stat = 0;
+            }
+
+            values.put(StatsType.values()[i], stat);
+        });
+
+        return new Stats(name, armor, values);
     }
 
-    public Stats(String name, Map<StatsType, String> values) {
+    public Stats(String name, String armor, Map<StatsType, Integer> values) {
         this.name = name;
+        this.armor = armor;
         this.values = values;
     }
 
@@ -35,7 +50,11 @@ public class Stats {
         return name;
     }
 
-    public Map<StatsType, String> getValues() {
+    public String getArmor() {
+        return armor;
+    }
+
+    public Map<StatsType, Integer> getValues() {
         return values;
     }
 }

@@ -26,17 +26,17 @@ public class GalleryManager implements IContainerManager<Gallery> {
     }
 
     @Override
-    public void update(String name) {
+    public boolean update(String name) {
         Gallery gallery = null;
 
         try {
             gallery = Gallery.fromElement(HtmlUtils.getBody(AzurConstants.WIKI_SHIP_GALLERY.replace("{ship}", name.replaceAll(" ", "_"))));
         } catch (Exception e) {
-            System.out.println("Failed: " + name);
+            System.out.println("Failed to update: " + name);
             e.printStackTrace();
         }
 
-        if (gallery == null) return;
+        if (gallery == null) return false;
 
         Gallery finalGallery = gallery;
 
@@ -44,8 +44,9 @@ public class GalleryManager implements IContainerManager<Gallery> {
                 .filter(s -> s.getName().equals(finalGallery.getName()))
                 .findFirst()
                 .ifPresent(galleryList::remove);
-
         galleryList.add(finalGallery);
+
+        return true;
     }
 
     @Override
