@@ -1,11 +1,6 @@
 package io.kyouin.azurlane.utils;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import io.kyouin.azurlane.containers.galleries.Gallery;
-import io.kyouin.azurlane.containers.quotes.Quotes;
-import io.kyouin.azurlane.containers.ships.Ship;
 
 import java.io.File;
 import java.io.FileReader;
@@ -17,34 +12,19 @@ import java.util.List;
 
 public final class FileUtils {
 
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-    private static final File parentFile = new File("azurlane");
-
-    private static final File galleriesFile = new File(parentFile, "galleries.json");
-    private static final Type galleriesType = new TypeToken<List<Gallery>>(){}.getType();
-
-    private static final File quotesFile = new File(parentFile, "quotes.json");
-    private static final Type quotesType = new TypeToken<List<Quotes>>(){}.getType();
-
-    private static final File shipsFile = new File(parentFile, "ships.json");
-    private static final Type shipsType = new TypeToken<List<Ship>>(){}.getType();
+    public static final File PARENT_FILE = new File("azurlane");
 
     private FileUtils() {
         //nothing
     }
 
     public static void init() {
-        if (parentFile.mkdirs()) {
-            System.out.println("Created directory azurlane");
+        if (PARENT_FILE.mkdirs()) {
+            System.out.println("Created directory azurlane."); //todo logger
         }
-
-        checkFile(galleriesFile);
-        checkFile(quotesFile);
-        checkFile(shipsFile);
     }
 
-    private static void checkFile(File file) {
+    public static void initFile(File file) {
         try {
             if (file.createNewFile()) {
                 try (FileWriter fw = new FileWriter(file)) {
@@ -56,11 +36,11 @@ public final class FileUtils {
         }
     }
 
-    private static <T> List<T> load(File file, Type type) {
+    public static <T> List<T> load(File file, Type type) {
         List<T> list = new ArrayList<>();
 
         try (FileReader fr = new FileReader(file)) {
-            list = gson.fromJson(fr, type);
+            list = new GsonBuilder().setPrettyPrinting().create().fromJson(fr, type);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,35 +48,11 @@ public final class FileUtils {
         return list;
     }
 
-    private static <T> void save(File file, Type type, List<T> list) {
+    public static <T> void save(File file, Type type, List<T> list) {
         try (FileWriter fw = new FileWriter(file)) {
-            fw.write(gson.toJson(list, type));
+            fw.write(new GsonBuilder().setPrettyPrinting().create().toJson(list, type));
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static List<Gallery> loadGalleries() {
-        return load(galleriesFile, galleriesType);
-    }
-
-    public static List<Quotes> loadQuotes() {
-        return load(quotesFile, quotesType);
-    }
-
-    public static List<Ship> loadShips() {
-        return load(shipsFile, shipsType);
-    }
-
-    public static void saveGalleries(List<Gallery> galleryList) {
-        save(galleriesFile, galleriesType, galleryList);
-    }
-
-    public static void saveQuotes(List<Quotes> quotesList) {
-        save(quotesFile, quotesType, quotesList);
-    }
-
-    public static void saveShips(List<Ship> shipList) {
-        save(shipsFile, shipsType, shipList);
     }
 }

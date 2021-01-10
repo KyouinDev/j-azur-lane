@@ -51,9 +51,9 @@ public class Info {
 
         String id = content.selectFirst(ID).nextElementSibling().text();
         String faction = content.selectFirst(FACTION).nextElementSibling().text();
-        String classification = content.selectFirst(CLASSIFICATION).nextElementSibling().text().replaceAll("[  ]", "");
-        String illustrator = content.selectFirst(ILLUSTRATOR).nextElementSibling().text().replaceAll("[  ]", "");
-        String voiceActor = content.selectFirst(VOICE_ACTOR).nextElementSibling().text().replaceAll("[  ]", "");
+        String classification = content.selectFirst(CLASSIFICATION).nextElementSibling().text().strip();
+        String illustrator = content.selectFirst(ILLUSTRATOR).nextElementSibling().text().strip();
+        String voiceActor = content.selectFirst(VOICE_ACTOR).nextElementSibling().text().strip();
         boolean secretaryQuest = !content.select(QUESTLINE).isEmpty();
         boolean retrofit = !content.select(RETROFIT).isEmpty();
 

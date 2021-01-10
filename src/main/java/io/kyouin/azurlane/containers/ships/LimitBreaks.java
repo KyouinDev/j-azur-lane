@@ -17,9 +17,9 @@ public class LimitBreaks {
 
         tbody.select("li").prepend("• ");
 
-        String first = tbody.selectFirst(FIRST_LB).nextElementSibling().text().replaceAll(" ?•", "\n•").trim();
-        String second = tbody.selectFirst(SECOND_LB).nextElementSibling().text().replaceAll(" ?•", "\n•").trim();
-        String third = tbody.selectFirst(THIRD_LB).nextElementSibling().text().replaceAll(" ?•", "\n•").trim();
+        String first = tbody.selectFirst(FIRST_LB).nextElementSibling().text().replaceAll(" ?•", "\n•").strip();
+        String second = tbody.selectFirst(SECOND_LB).nextElementSibling().text().replaceAll(" ?•", "\n•").strip();
+        String third = tbody.selectFirst(THIRD_LB).nextElementSibling().text().replaceAll(" ?•", "\n•").strip();
 
         return new LimitBreaks(first, second, third);
     }

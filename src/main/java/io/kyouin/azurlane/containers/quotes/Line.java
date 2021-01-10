@@ -41,4 +41,8 @@ public class Line {
     public String getAudioUrl() {
         return audioUrl;
     }
+
+    public boolean hasAudio() {
+        return audioUrl != null;
+    }
 }

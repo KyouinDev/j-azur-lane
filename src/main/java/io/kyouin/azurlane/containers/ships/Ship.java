@@ -1,6 +1,7 @@
 package io.kyouin.azurlane.containers.ships;
 
 import io.kyouin.azurlane.enums.SkillType;
+import io.kyouin.azurlane.utils.ObjectUtils;
 import org.jsoup.nodes.Element;
 
 import java.util.Comparator;
@@ -114,13 +115,8 @@ public class Ship {
     }
 
     public String getSimplifiedName() {
-        return name
+        return ObjectUtils.getNameWithoutAccents(name)
                 .replaceAll("[()\\-']", "")
-                .replaceAll("[âäàåã]", "a")
-                .replaceAll("[êëéè]", "e")
-                .replaceAll("[ïîì]", "i")
-                .replaceAll("[ôöò]", "o")
-                .replaceAll("[üù]", "u")
                 .replaceAll("µ", "muse");
     }
 
@@ -140,8 +136,16 @@ public class Ship {
         return limitBreaks;
     }
 
+    public boolean hasLimitBreaks() {
+        return limitBreaks != null;
+    }
+
     public DevelopmentLevels getDevelopmentLevels() {
         return developmentLevels;
+    }
+
+    public boolean hasDevelopmentLevels() {
+        return developmentLevels != null;
     }
 
     public List<Skill> getSkills() {
@@ -152,15 +156,31 @@ public class Ship {
         return fleetTech;
     }
 
+    public boolean hasFleetTech() {
+        return fleetTech != null;
+    }
+
     public List<ChapterDrop> getChapterDrops() {
         return chapterDrops;
+    }
+
+    public boolean isChapterDrop() {
+        return chapterDrops != null;
     }
 
     public Obtainment getObtainment() {
         return obtainment;
     }
 
+    public boolean hasObtainment() {
+        return obtainment != null;
+    }
+
     public Values getValues() {
         return values;
+    }
+
+    public boolean hasValues() {
+        return values != null;
     }
 }

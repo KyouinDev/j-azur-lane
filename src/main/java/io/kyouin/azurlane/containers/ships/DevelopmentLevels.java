@@ -26,12 +26,12 @@ public class DevelopmentLevels {
         tbody.select("img").forEach(img -> img.prepend(img.attr("alt")));
         tbody.select("li").prepend("• ");
 
-        String first = tbody.selectFirst(FIRST_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").trim();
-        String second = tbody.selectFirst(SECOND_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").trim();
-        String third = tbody.selectFirst(THIRD_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").trim();
-        String fourth = tbody.selectFirst(FOURTH_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").trim();
-        String fifth = tbody.selectFirst(FIFTH_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").trim();
-        String sixth = tbody.selectFirst(SIXTH_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").trim();
+        String first = tbody.selectFirst(FIRST_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").strip();
+        String second = tbody.selectFirst(SECOND_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").strip();
+        String third = tbody.selectFirst(THIRD_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").strip();
+        String fourth = tbody.selectFirst(FOURTH_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").strip();
+        String fifth = tbody.selectFirst(FIFTH_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").strip();
+        String sixth = tbody.selectFirst(SIXTH_DL).nextElementSibling().text().replaceAll(" ?•", "\n•").strip();
 
         return new DevelopmentLevels(first, second, third, fourth, fifth, sixth);
     }

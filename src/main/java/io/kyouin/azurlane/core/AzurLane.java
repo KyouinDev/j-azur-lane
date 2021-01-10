@@ -48,8 +48,8 @@ public final class AzurLane {
     }
 
     public void saveToFiles() {
-        FileUtils.saveGalleries(galleryManager.getAll());
-        FileUtils.saveQuotes(quotesManager.getAll());
-        FileUtils.saveShips(shipManager.getAll());
+        galleryManager.save();
+        quotesManager.save();
+        shipManager.save();
     }
 }

@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 public final class WikiUtils {
 
     private final static String TABLE_ROWS = "table.wikitable > * tr:gt(0)";
-
     private final static String SHIP_NAME = "td:eq(1)";
     private final static String RARITY = "td:eq(2)";
 

@@ -25,7 +25,7 @@ public class ChapterDrop {
         String chapter = tr.select(CHAPTER_NAME).text();
         List<String> stages = Arrays.asList(tr.select(FIRST_STAGE).text(), tr.select(SECOND_STAGE).text(), tr.select(THIRD_STAGE).text(), tr.select(FOURTH_STAGE).text());
 
-        if (stages.stream().allMatch(stage -> stage.equals(""))) return null;
+        if (stages.stream().allMatch(""::equals)) return null;
 
         return new ChapterDrop(chapter, stages);
     }
@@ -44,6 +44,6 @@ public class ChapterDrop {
     }
 
     public boolean allStagesDrop() {
-        return stages.stream().allMatch(stage -> stage.equals("✓"));
+        return stages.stream().allMatch("✓"::equals);
     }
 }

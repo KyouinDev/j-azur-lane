@@ -1,5 +1,6 @@
 package io.kyouin.azurlane.containers.galleries;
 
+import io.kyouin.azurlane.utils.ObjectUtils;
 import org.jsoup.nodes.Element;
 
 public class Skin {
@@ -45,7 +46,7 @@ public class Skin {
         Integer cost = null;
 
         if (!shipSkin.select(COST).isEmpty() && !shipSkin.selectFirst(COST).nextElementSibling().select(GEM).isEmpty()) {
-            cost = Integer.parseInt(shipSkin.selectFirst(COST).nextElementSibling().text());
+            cost = ObjectUtils.parseInt(shipSkin.selectFirst(COST).nextElementSibling().text(), 0);
         }
 
         return new Skin(name, imageUrl, imageChibiUrl, unavailable, obtainedFrom, live2D, cost);
@@ -73,6 +74,10 @@ public class Skin {
         return imageChibiUrl;
     }
 
+    public boolean hasImageChibi() {
+        return imageChibiUrl != null;
+    }
+
     public boolean isAvailable() {
         return unavailable == null;
     }
@@ -87,5 +92,9 @@ public class Skin {
 
     public Integer getCost() {
         return cost;
+    }
+
+    public boolean hasCost() {
+        return cost != null;
     }
 }

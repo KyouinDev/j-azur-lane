@@ -36,7 +36,7 @@ public class Skill {
         nextTr.select(USELESS_TAGS).remove();
         nextTr.select("li").prepend("• ");
 
-        String description = nextTr.text().replaceAll("•", "\n•").replace(". ,", "").trim();
+        String description = nextTr.text().replaceAll("•", "\n•").replace(". ,", "").strip();
 
         return new Skill(name, type, iconUrl, gifUrl, description);
     }
@@ -61,8 +61,16 @@ public class Skill {
         return iconUrl;
     }
 
+    public boolean hasIcon() {
+        return iconUrl != null;
+    }
+
     public String getGifUrl() {
         return gifUrl;
+    }
+
+    public boolean hasGif() {
+        return gifUrl != null;
     }
 
     public String getDescription() {

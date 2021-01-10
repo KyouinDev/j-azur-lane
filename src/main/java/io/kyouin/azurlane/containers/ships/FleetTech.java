@@ -1,5 +1,6 @@
 package io.kyouin.azurlane.containers.ships;
 
+import io.kyouin.azurlane.utils.ObjectUtils;
 import org.jsoup.nodes.Element;
 
 public class FleetTech {
@@ -22,16 +23,20 @@ public class FleetTech {
         tbody.select(TECH_POINTS_LINKS).remove();
         String totalPointsText = tbody.select(COLLECTION).last().nextElementSibling().nextElementSibling().text();
 
-        if (totalPointsText.equals("0")) return null;
+        if ("0".equals(totalPointsText)) return null;
 
         tbody.select("img").forEach(img -> img.prepend(img.attr("alt")));
 
-        String collectionBonus = tbody.select(COLLECTION).first().nextElementSibling().text().replaceAll(" ", " ");
-        String level120Bonus = tbody.select(LVL120).first().nextElementSibling().text().replaceAll(" ", " ");
-        int collectionPoints = Integer.parseInt(tbody.select(COLLECTION).last().nextElementSibling().text());
-        int maxLimitBreakPoints = Integer.parseInt(tbody.select(MLB).first().nextElementSibling().text());
-        int level120Points = Integer.parseInt(tbody.select(LVL120).last().nextElementSibling().text());
-        int totalPoints = Integer.parseInt(totalPointsText);
+        String collectionBonus = tbody.select(COLLECTION).first().nextElementSibling().text()
+                .replaceAll("\\)", "),")
+                .replaceAll(" ", " ");
+        String level120Bonus = tbody.select(LVL120).first().nextElementSibling().text()
+                .replaceAll("\\)", "),")
+                .replaceAll(" ", " ");
+        int collectionPoints = ObjectUtils.parseInt(tbody.select(COLLECTION).last().nextElementSibling().text(), 0);
+        int maxLimitBreakPoints = ObjectUtils.parseInt(tbody.select(MLB).first().nextElementSibling().text(), 0);
+        int level120Points = ObjectUtils.parseInt(tbody.select(LVL120).last().nextElementSibling().text(), 0);
+        int totalPoints = ObjectUtils.parseInt(totalPointsText, 0);
 
         return new FleetTech(collectionBonus, level120Bonus, collectionPoints, maxLimitBreakPoints, level120Points, totalPoints);
     }

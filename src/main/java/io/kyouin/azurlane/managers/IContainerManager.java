@@ -11,4 +11,8 @@ public interface IContainerManager<T> {
     boolean update(String name);
 
     void updateAll();
+
+    List<T> load();
+
+    void save();
 }
