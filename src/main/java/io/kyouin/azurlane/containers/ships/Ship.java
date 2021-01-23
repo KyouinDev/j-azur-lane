@@ -1,7 +1,6 @@
 package io.kyouin.azurlane.containers.ships;
 
 import io.kyouin.azurlane.enums.SkillType;
-import io.kyouin.azurlane.utils.ObjectUtils;
 import org.jsoup.nodes.Element;
 
 import java.util.Comparator;
@@ -19,7 +18,8 @@ public class Ship {
     private final static String DEVELOPMENT_LEVELS = "table#Development_levels > tbody";
     private final static String SKILLS = "table#Skills > tbody > tr";
     private final static String FLEET_TECH = "table#Fleet_technology > tbody";
-    private final static String DROP_STAGES = "table#Drop > tbody";
+    private final static String DROP_TABLE = "table#Drop > tbody";
+    private final static String DROP_STAGES = "tr:gt(2)";
     private final static String CONSTRUCTION = "div#Construction:has(table)";
     private final static String VALUES = "table#Values > tbody";
 
@@ -72,13 +72,15 @@ public class Ship {
         FleetTech fleetTech = FleetTech.fromElement(divContent.selectFirst(FLEET_TECH));
         List<ChapterDrop> chapterDrops = null;
 
-        if (!divContent.select(DROP_STAGES).isEmpty()) {
-            chapterDrops = divContent.selectFirst(DROP_STAGES).select("tr").stream()
-                    .skip(2)
-                    .limit(13)
+        if (!divContent.select(DROP_TABLE).isEmpty()) {
+            chapterDrops = divContent.selectFirst(DROP_TABLE).select(DROP_STAGES).stream()
                     .map(ChapterDrop::fromElement)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
+
+            if (chapterDrops.isEmpty()) {
+                chapterDrops = null;
+            }
         }
 
         Obtainment obtainment = null;
@@ -112,12 +114,6 @@ public class Ship {
 
     public String getName() {
         return name;
-    }
-
-    public String getSimplifiedName() {
-        return ObjectUtils.getNameWithoutAccents(name)
-                .replaceAll("[()\\-']", "")
-                .replaceAll("µ", "muse");
     }
 
     public Info getInfo() {

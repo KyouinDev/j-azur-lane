@@ -8,7 +8,7 @@ import java.util.List;
 public class ChapterDrop {
 
     private final static String BOSS_NODES = "td > a[title*=Boss] > img";
-    private final static String DROP_STAGES = "td > a[title*=-] > img";
+    private final static String DROP_STAGES = "td > a[title*=-] > img[alt*=Check]";
     private final static String CHAPTER_NAME = "td:eq(0)";
     private final static String FIRST_STAGE = "td:eq(1)";
     private final static String SECOND_STAGE = "td:eq(2)";
@@ -23,6 +23,9 @@ public class ChapterDrop {
         tr.select(DROP_STAGES).forEach(img -> img.prepend("✓"));
 
         String chapter = tr.select(CHAPTER_NAME).text();
+
+        if (!chapter.startsWith("Chapter")) return null;
+
         List<String> stages = Arrays.asList(tr.select(FIRST_STAGE).text(), tr.select(SECOND_STAGE).text(), tr.select(THIRD_STAGE).text(), tr.select(FOURTH_STAGE).text());
 
         if (stages.stream().allMatch(""::equals)) return null;

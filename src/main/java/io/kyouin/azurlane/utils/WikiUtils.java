@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 public final class WikiUtils {
 
     private final static String TABLE_ROWS = "table.wikitable > * tr:gt(0)";
-    private final static String SHIP_NAME = "td:eq(1)";
-    private final static String RARITY = "td:eq(2)";
+    private final static String FIRST_ROW_CELL = "td:eq(1)";
+    private final static String SECOND_ROW_CELL = "td:eq(2)";
 
     private WikiUtils() {
         //nothing
@@ -17,8 +17,8 @@ public final class WikiUtils {
 
     public static List<String> getShipNames() {
         return HtmlUtils.getBody(AzurConstants.WIKI_SHIP_LIST).select(TABLE_ROWS).stream()
-                .filter(row -> !"Unreleased".equals(row.select(RARITY).text()))
-                .map(row -> row.select(SHIP_NAME).text())
+                .filter(row -> !"Unreleased".equals(row.select(SECOND_ROW_CELL).text()))
+                .map(row -> row.select(FIRST_ROW_CELL).text())
                 .distinct()
                 .collect(Collectors.toList());
     }

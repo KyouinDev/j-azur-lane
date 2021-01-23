@@ -15,11 +15,15 @@ public final class ObjectUtils {
     }
 
     public static String getNameWithoutAccents(String name) {
-        return name
-                .replaceAll("[âäàåã]", "a")
+        return name.replaceAll("[âäàåã]", "a")
                 .replaceAll("[êëéè]", "e")
                 .replaceAll("[ïîì]", "i")
                 .replaceAll("[ôöò]", "o")
                 .replaceAll("[üù]", "u");
+    }
+
+    public static String getSimplifiedName(String name) {
+        return name.replaceAll("[()\\-']", "")
+                .replaceAll("µ", "muse");
     }
 }
